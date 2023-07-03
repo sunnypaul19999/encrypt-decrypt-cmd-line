@@ -1,76 +1,52 @@
 package com.baar;
 
 
-import com.baar.encryptdecrypt.AES256;
-
-import java.util.Scanner;
-
+import com.baar.service.ApplicationExecution;
+import com.baar.service.serviceimpl.ApplicationExecutionImpl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class App {
-    
-    private static String keyString = "DCB";
-    
-    public void run() {
-        
-        userMenu();
-    }
-    
-    private void displayRootMenu() {
-        
-        System.out.println("options:");
-        System.out.println("1. encrypt");
-        System.out.println("2. decrypt");
-    }
-    
-    private void userMenu() {
-        
-        displayRootMenu();
-        
-        final Scanner userInput = new Scanner(System.in);
-        final String userRootOption = userInput.nextLine();
-        
-        
-        switch (userRootOption) {
-            case "1":
-                final String plainText = userInput.nextLine();
-                System.out.println(encrypt(plainText));
-                break;
-            case "2":
-                final String encryptedText = userInput.nextLine();
-                System.out.println(decrypt(encryptedText));
-                break;
-            default:
-                System.out.println("OPTIONS MISMATCH!!!");
-                break;
-        }
-    }
-    
-    private String encrypt(final String text) {
-        
-        try {
-            return AES256.encrypt(text, keyString);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        
-        return null;
-    }
-    
-    private String decrypt(final String encryptedText) {
-        
-        try {
-            return AES256.decrypt(encryptedText, keyString);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        
-        return null;
-    }
-    
-    public static void main(String[] args) throws Exception {
-        
-        App app = new App();
-        app.run();
-    }
-    
+
+  private static void test() {
+
+    final List<String> encrypt = new ArrayList<>();
+    Collections.addAll(encrypt, "--no-gui", "--encrypt");
+    final List<String> encryptArg2 = Arrays.asList(
+            String.format("--encrypt-value=\"%s\"", "this is my private string").split(" ")).stream()
+        .map(String::toString).collect(
+            Collectors.toList());
+    encrypt.addAll(encryptArg2);
+    System.out.println(encrypt);
+    final ApplicationExecution encryptExecution = new ApplicationExecutionImpl(
+        encrypt.stream().toArray(String[]::new));
+    final String encryptedValue = encryptExecution.execute();
+
+    final List<String> decrypt = new ArrayList<>();
+    Collections.addAll(decrypt, "--no-gui", "--decrypt");
+    final List<String> decryptArg2 = Arrays.asList(
+            String.format("--decrypt-value=\"%s\"", encryptedValue).split(" ")).stream()
+        .map(String::toString).collect(
+            Collectors.toList());
+    decrypt.addAll(decryptArg2);
+    System.out.println(decrypt);
+    final ApplicationExecution decryptExecution = new ApplicationExecutionImpl(
+        decrypt.stream().toArray(String[]::new));
+    decryptExecution.execute();
+
+    String[] gui = new String[]{"--gui"};
+    final ApplicationExecution guiExecution = new ApplicationExecutionImpl(gui);
+    guiExecution.execute();
+  }
+
+  public static void main(String[] args) throws Exception {
+//    test();
+//    System.out.println(Arrays.toString(args));
+//    System.out.println(args[2].split(ExecutionFlag.ENCRYPT_VALUE.getFlagName())[1]);
+    final ApplicationExecution applicationExecution = new ApplicationExecutionImpl(args);
+    applicationExecution.execute();
+  }
 }
