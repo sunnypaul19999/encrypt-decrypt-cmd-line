@@ -4,7 +4,6 @@ import com.baar.encryptdecrypt.AES256;
 import com.baar.service.ApplicationExecution;
 import com.baar.util.constant.execution.EncryptionSecret;
 import com.baar.util.constant.execution.ExecutionFlag;
-import java.util.Arrays;
 
 public class ApplicationExecutionImpl implements ApplicationExecution {
 
@@ -80,7 +79,7 @@ public class ApplicationExecutionImpl implements ApplicationExecution {
     String opValue;
     if (userArgs[0].equals(ExecutionFlag.GUI.getFlagName())) {
       final String[] convertedUserArgs = new ApplicationGUIExecutionImpl().execute();
-      System.out.println(Arrays.toString(convertedUserArgs));
+//      System.out.println(Arrays.toString(convertedUserArgs));
       opValue = noGUIExecuteParseFlags(convertedUserArgs);
 
     } else {
